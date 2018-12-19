@@ -138,7 +138,7 @@ function removeChains(grid) {
             }
         }
     }
-    horizontal4();
+    //horizontal4();
     for (let i = 0; i < toRemove.length; i++) {
         if (!grid[toRemove[i].y][toRemove[i].x].includes("explosive")) {
             grid[toRemove[i].y][toRemove[i].x] = "";
