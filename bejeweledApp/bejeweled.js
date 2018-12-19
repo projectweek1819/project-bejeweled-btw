@@ -1,7 +1,9 @@
-let grid = []
+let grid = [];
 let colors = ["purple", "red", "yellow", "green", "blue", "white", "orange"];
 let colWidth;
 let rowHeight;
+
+let canvas;
 
 let selected;
 let score;
@@ -29,9 +31,10 @@ function setup() {
     explosives = loadImage("img\\explosiveRed.png");
     selected = null;
     frameRate(3);
-    createCanvas(500, 500);
+    canvas = createCanvas(600, 600);
+    canvas.parent("myContainer");
     for (let i = 0; i < 8; i++) {
-        let col = []
+        let col = [];
         for (let j = 0; j < 8; j++) {
             let colorNmb = Math.floor(Math.random() * 7);
             col.push(colors[colorNmb]);
