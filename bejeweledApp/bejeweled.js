@@ -6,6 +6,7 @@ let rowHeight;
 let selected;
 let score;
 let img = [];
+let explosives;
 
 function widthGrid(grid) {
     return grid[0].length;
@@ -25,6 +26,7 @@ function setup() {
     whiteGem = loadImage("img\\whiteGem.png");
     orangeGem = loadImage("img\\orangeGem.png");
     img.push(purpleGem,redGem,yellowGem,greenGem,blueGem,whiteGem,orangeGem);
+    explosives = loadImage("img\\explosiveRed.png");
     selected = null;
     frameRate(3);
     createCanvas(500, 500);
@@ -136,8 +138,11 @@ function removeChains(grid) {
             }
         }
     }
+    horizontal4();
     for (let i = 0; i < toRemove.length; i++) {
-        grid[toRemove[i].y][toRemove[i].x] = "";
+        if (!grid[toRemove[i].y][toRemove[i].x].includes("explosive")) {
+            grid[toRemove[i].y][toRemove[i].x] = "";
+        }
     }
 }
 
@@ -200,6 +205,43 @@ function mouseClicked() {
     }
 }
 
+function horizontal4(){
+
+    function setExplosive(positions){
+        let random = Math.floor(Math.random()*positions.length);
+        let position = positions[random];
+        grid[position.y][position.x] += " explosive";
+    }
+
+    for (let x = 0; x < widthGrid(grid); x++){
+        for (let y = 0; y < heightGrid(grid); y++){
+            if (horizontalChainAt(grid,{x:x,y:y}) === 4){
+                let color = grid[x][y];
+                let positions = [{x:x,y:y}];
+                let tx = x - 1;
+                while (true){
+                    if (grid[tx][y] === color){
+                        positions.push({x:tx,y:y})
+                        tx--;
+                    } else {
+                        break;
+                    }
+                }
+                tx = x+1;
+                while (true){
+                    if (grid[tx][y] === color){
+                        positions.push({x:tx,y:y})
+                        tx++;
+                    } else {
+                        break;
+                    }
+                }
+                setExplosive(positions);
+            }
+        }
+    }
+}
+
 function swap(grid, p, q) {
     x1 = p.x;
     x2 = q.x;
@@ -250,11 +292,14 @@ function draw() {
                 index = 6;
             }
 
-            image(img[index],x,y);
+            if(grid[j][i].includes("explosive")){
+                image(explosives,x,y);
+            } else {
+                image(img[index], x, y);
+            }
 
         }
     }
-
     removeChains(grid);
     collapse(grid);
 
