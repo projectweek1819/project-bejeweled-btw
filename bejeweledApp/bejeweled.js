@@ -174,7 +174,7 @@ function removeChains(grid) {
                 for (let tx = toRemove[i].x-1; tx <= toRemove[i].x+1 && tx < heightGrid(grid); tx++){
                     for (let ty = toRemove[i].y-1; ty <= toRemove[i].y+1 && ty < widthGrid(grid);ty++){
                         tx = (tx < 0) ? 0: tx;
-                        ty = (ty < 0) ? 0: ty;
+                        ty = (ty < 0) ? 0: ty   ;
                         grid[ty][tx] = "";
                     }
                 }
@@ -294,7 +294,8 @@ function swap(grid, p, q) {
 
 
 function draw() {
-    background(55);
+    clear()
+    background(0,0,0,0);
 
     reFill(grid);
     for (let i = 0; i < widthGrid(grid); i++) {
