@@ -8,7 +8,10 @@ let canvas;
 let selected;
 let score;
 let img = [];
-let explosives;
+let explosives = [];
+let explosion;
+
+let animation;
 
 function widthGrid(grid) {
     return grid[0].length;
@@ -20,6 +23,10 @@ function heightGrid(grid) {
 
 function setup() {
     score = 0;
+    animation = false;
+
+    explosion = loadImage("img\\explosion.png");
+
     purpleGem = loadImage("img\\purpleGem.png");
     redGem = loadImage("img\\redGem.png");
     yellowGem = loadImage("img\\yellowGem.png");
@@ -27,8 +34,18 @@ function setup() {
     blueGem = loadImage("img\\blueGem.png");
     whiteGem = loadImage("img\\whiteGem.png");
     orangeGem = loadImage("img\\orangeGem.png");
-    img.push(purpleGem,redGem,yellowGem,greenGem,blueGem,whiteGem,orangeGem);
-    explosives = loadImage("img\\explosiveRed.png");
+    img.push(purpleGem, redGem, yellowGem, greenGem, blueGem, whiteGem, orangeGem);
+
+    purpleExplosive = loadImage("img\\explosivePurple.png");
+    redExplosive = loadImage("img\\explosiveRed.png");
+    yellowExplosive = loadImage("img\\explosiveYellow.png");
+    greenExplosive = loadImage("img\\explosiveGreen.png");
+    blueExplosive = loadImage("img\\explosiveBlue.png");
+    whiteExplosive = loadImage("img\\explosiveWhite.png");
+    orangeExplosive = loadImage("img\\explosiveOrange.png");
+    explosives.push(purpleExplosive, redExplosive, yellowExplosive, greenExplosive, blueExplosive, whiteExplosive, orangeExplosive);
+
+
     selected = null;
     frameRate(3);
     canvas = createCanvas(500, 500);
@@ -50,6 +67,10 @@ function setup() {
 
 function horizontalChainAt(grid, position) {
     let color = grid[position.y][position.x];
+    if (color.includes("explosive")) {
+        let temp = color.split(" ");
+        color = temp[0];
+    }
     let left = 0;
     let right = 0;
 
@@ -57,7 +78,7 @@ function horizontalChainAt(grid, position) {
     let tx = position.x + 1;
 
     while (true) {
-        if (isInside(grid, {x: tx, y: ty}) && grid[ty][tx] === color) {
+        if (isInside(grid, {x: tx, y: ty}) && grid[ty][tx].includes(color) && !grid[ty][tx].includes("temp")) {
             right++;
             tx++;
         } else {
@@ -69,7 +90,7 @@ function horizontalChainAt(grid, position) {
     ty = position.y;
     tx = position.x - 1;
     while (true) {
-        if (isInside(grid, {x: tx, y: ty}) && grid[ty][tx] === color) {
+        if (isInside(grid, {x: tx, y: ty}) && grid[ty][tx].includes(color) && !grid[ty][tx].includes("temp")) {
             left++;
             tx--;
         } else {
@@ -99,6 +120,10 @@ function swap(grid, p, q) {
 
 function verticalChainAt(grid, position) {
     let color = grid[position.y][position.x];
+    if (color.includes("explosive")) {
+        let temp = color.split(" ");
+        color = temp[0];
+    }
     let up = 0;
     let down = 0;
 
@@ -106,7 +131,7 @@ function verticalChainAt(grid, position) {
     let tx = position.x;
 
     while (true) {
-        if (isInside(grid, {x: tx, y: ty}) && grid[ty][tx] === color) {
+        if (isInside(grid, {x: tx, y: ty}) && grid[ty][tx].includes(color) && !grid[ty][tx].includes("temp")) {
             up++;
             ty--;
         } else {
@@ -118,7 +143,7 @@ function verticalChainAt(grid, position) {
     ty = position.y + 1;
     tx = position.x;
     while (true) {
-        if (isInside(grid, {x: tx, y: ty}) && grid[ty][tx] === color) {
+        if (isInside(grid, {x: tx, y: ty}) && grid[ty][tx].includes(color) && !grid[ty][tx].includes("temp")) {
             down++;
             ty++;
         } else {
@@ -141,10 +166,28 @@ function removeChains(grid) {
             }
         }
     }
-    //horizontal4();
+    horizontal4();
+    vertical4();
     for (let i = 0; i < toRemove.length; i++) {
-        if (!grid[toRemove[i].y][toRemove[i].x].includes("explosive")) {
-            grid[toRemove[i].y][toRemove[i].x] = "";
+        if (!grid[toRemove[i].y][toRemove[i].x].includes("temp")) {
+            if(grid[toRemove[i].y][toRemove[i].x].includes("explosive")){
+                for (let tx = toRemove[i].x-1; tx <= toRemove[i].x+1 && tx < heightGrid(grid); tx++){
+                    for (let ty = toRemove[i].y-1; ty <= toRemove[i].y+1 && ty < widthGrid(grid);ty++){
+                        tx = (tx < 0) ? 0: tx;
+                        ty = (ty < 0) ? 0: ty;
+                        grid[ty][tx] = "";
+                    }
+                }
+                console.table(grid);
+            } else {
+                grid[toRemove[i].y][toRemove[i].x] = "";
+            }
+        }
+        for (let x = 0; x < widthGrid(grid); x++) {
+            for (let y = 0; y < heightGrid(grid); y++) {
+                let string = grid[y][x];
+                grid[y][x] = string.replace("temp", "explosive");
+            }
         }
     }
 }
@@ -208,38 +251,21 @@ function mouseClicked() {
     }
 }
 
-function horizontal4(){
-
-    function setExplosive(positions){
-        let random = Math.floor(Math.random()*positions.length);
-        let position = positions[random];
-        grid[position.y][position.x] += " explosive";
+function horizontal4() {
+    for (let x = 0; x < widthGrid(grid); x++) {
+        for (let y = 0; y < heightGrid(grid); y++) {
+            if (horizontalChainAt(grid, {x: x, y: y}) === 4) {
+                grid[y][x] += " temp ";
+            }
+        }
     }
+}
 
-    for (let x = 0; x < widthGrid(grid); x++){
-        for (let y = 0; y < heightGrid(grid); y++){
-            if (horizontalChainAt(grid,{x:x,y:y}) === 4){
-                let color = grid[x][y];
-                let positions = [{x:x,y:y}];
-                let tx = x - 1;
-                while (true){
-                    if (grid[tx][y] === color){
-                        positions.push({x:tx,y:y})
-                        tx--;
-                    } else {
-                        break;
-                    }
-                }
-                tx = x+1;
-                while (true){
-                    if (grid[tx][y] === color){
-                        positions.push({x:tx,y:y})
-                        tx++;
-                    } else {
-                        break;
-                    }
-                }
-                setExplosive(positions);
+function vertical4() {
+    for (let x = 0; x < widthGrid(grid); x++) {
+        for (let y = 0; y < heightGrid(grid); y++) {
+            if (verticalChainAt(grid, {x: x, y: y}) === 4) {
+                grid[y][x] += " temp";
             }
         }
     }
@@ -256,7 +282,7 @@ function swap(grid, p, q) {
         let temp = grid[p.y][p.x];
         grid[p.y][p.x] = grid[q.y][q.x];
         grid[q.y][q.x] = temp;
-        if (!(horizontalChainAt(grid,p) >= 3|| horizontalChainAt(grid,q) >= 3 || verticalChainAt(grid,p) >= 3|| verticalChainAt(grid,q) >= 3)){
+        if (!(horizontalChainAt(grid, p) >= 3 || horizontalChainAt(grid, q) >= 3 || verticalChainAt(grid, p) >= 3 || verticalChainAt(grid, q) >= 3)) {
             console.log("no line");
             temp = grid[p.y][p.x];
             grid[p.y][p.x] = grid[q.y][q.x];
@@ -275,35 +301,37 @@ function draw() {
         for (let j = 0; j < heightGrid(grid); j++) {
             let color = grid[j][i];
 
-            let x =  (i * colWidth);
-            let y =  (j * rowHeight);
+            let x = (i * colWidth);
+            let y = (j * rowHeight);
 
-            let index = -1;
-            if (color === colors[0]) {
-                index = 0;
-            } else if (color === colors[1]) {
-                index = 1;
-            } else if (color === colors[2]) {
-                index = 2;
-            } else if (color === colors[3]) {
-                index =3;
-            } else if (color === colors[4]) {
-                index = 4;
-            } else if (color === colors[5]) {
-                index = 5;
-            } else if (color === colors[6]) {
-                index = 6;
+
+                let index = -1;
+                if (color.includes(colors[0])) {
+                    index = 0;
+                } else if (color.includes(colors[1])) {
+                    index = 1;
+                } else if (color.includes(colors[2])) {
+                    index = 2;
+                } else if (color.includes(colors[3])) {
+                    index = 3;
+                } else if (color.includes(colors[4])) {
+                    index = 4;
+                } else if (color.includes(colors[5])) {
+                    index = 5;
+                } else if (color.includes(colors[6])) {
+                    index = 6;
+                }
+                if (index === -1){
+                    console.log(color);
+                }
+                if (grid[j][i].includes("explosive")) {
+                    image(explosives[index], x, y);
+                } else {
+                    image(img[index], x, y);
+                }
+
             }
-
-            if(grid[j][i].includes("explosive")){
-                image(explosives,x,y);
-            } else {
-                image(img[index], x, y);
-            }
-
         }
-    }
     removeChains(grid);
     collapse(grid);
-
 }
