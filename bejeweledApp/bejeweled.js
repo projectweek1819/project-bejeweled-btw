@@ -36,13 +36,13 @@ function setup() {
     orangeGem = loadImage("img\\orangeGem.png");
     img.push(purpleGem, redGem, yellowGem, greenGem, blueGem, whiteGem, orangeGem);
 
-    purpleExplosive = loadImage("img\\explosivePurple.png");
-    redExplosive = loadImage("img\\explosiveRed.png");
-    yellowExplosive = loadImage("img\\explosiveYellow.png");
-    greenExplosive = loadImage("img\\explosiveGreen.png");
-    blueExplosive = loadImage("img\\explosiveBlue.png");
-    whiteExplosive = loadImage("img\\explosiveWhite.png");
-    orangeExplosive = loadImage("img\\explosiveOrange.png");
+    purpleExplosive = loadImage("img\\explosivePurple_2_55x55.png");
+    redExplosive = loadImage("img\\explosiveRed_55x55.png");
+    yellowExplosive = loadImage("img\\explosiveYellow_55x55.png");
+    greenExplosive = loadImage("img\\explosiveGreen_55x55.png");
+    blueExplosive = loadImage("img\\explosiveBlue_55x55.png");
+    whiteExplosive = loadImage("img\\explosiveWhite_55x55.png");
+    orangeExplosive = loadImage("img\\explosiveOrange_55x55.png");
     explosives.push(purpleExplosive, redExplosive, yellowExplosive, greenExplosive, blueExplosive, whiteExplosive, orangeExplosive);
 
 

@@ -7,8 +7,18 @@
     <script src="bejeweled.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" type="image/x-icon" href="img/blueGem.png">
+    <script>
+        window.onload = function() {
+            var context = new AudioContext();
+        }
+    </script>
+    <!--Credits to stackoverflow-->
 </head>
 <body>
+<audio autoplay loop>
+    <source src="RS.mp3" type="audio/ogg">
+    Your browser does not support audio!
+</audio>
 <main>
     <img src="img/Bejeweled_Blitz.png" alt="">
     <div id="myContainer"></div>

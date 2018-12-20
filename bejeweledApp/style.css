@@ -1,7 +1,7 @@
 html {
     background-image: url("img/schatkistbck1.png");
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: cover;
 }
 
 main img {
