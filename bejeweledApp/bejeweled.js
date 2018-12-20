@@ -9,7 +9,6 @@ let selected;
 let score;
 let img = [];
 let explosives = [];
-let explosion;
 
 let animation;
 
@@ -24,8 +23,6 @@ function heightGrid(grid) {
 function setup() {
     score = 0;
     animation = false;
-
-    explosion = loadImage("img\\explosion.png");
 
     purpleGem = loadImage("img\\purpleGem.png");
     redGem = loadImage("img\\redGem.png");
@@ -154,6 +151,7 @@ function verticalChainAt(grid, position) {
 }
 
 function removeChains(grid) {
+
     let toRemove = [];
     for (let x = 0; x < widthGrid(grid); x++) {
         for (let y = 0; y < heightGrid(grid); y++) {
@@ -294,7 +292,7 @@ function swap(grid, p, q) {
 
 
 function draw() {
-    clear()
+    clear();
     background(0,0,0,0);
 
     reFill(grid);
