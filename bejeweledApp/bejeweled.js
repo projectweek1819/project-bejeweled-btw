@@ -31,7 +31,7 @@ function setup() {
     explosives = loadImage("img\\explosiveRed.png");
     selected = null;
     frameRate(3);
-    canvas = createCanvas(600, 600);
+    canvas = createCanvas(500, 500);
     canvas.parent("myContainer");
     for (let i = 0; i < 8; i++) {
         let col = [];
